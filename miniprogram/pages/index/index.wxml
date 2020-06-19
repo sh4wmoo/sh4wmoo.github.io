@@ -55,5 +55,12 @@
     </navigator>
   </view>
 
+    <!-- 首页 -->
+  <view class="uploader">
+    <navigator url="../copy/home/home" open-type="navigate" class="uploader-text">
+      <text>首页</text>
+    </navigator>
+  </view>
+
 
 </view>
