@@ -1,0 +1,132 @@
+<view class="container {{isIpx?'iphone-x':''}}">
+    <view class="topBar" wx:if="{{!buyFullWindow}}">
+        <view bindtap="onTapUserIcon" class="userContainer">
+            <image class="userCenter" mode="aspectFit" src="https://vfile.meituan.net/paotui/jfj3kicvgxecdi.png"></image>
+            <button bindgetuserinfo="handleGetUserInfo" catchtap="" class="auth-layer" openType="getUserInfo" wx:if="{{!isLogin}}"></button>
+        </view>
+        <image class="slogan" mode="aspectFit" src="https://vfile.meituan.net/paotui/jfj3nmqp8j8aor.png"></image>
+        <view bindtap="onTapCity" class="cityContainer">{{cityNameDisplayed}}
+      <image class="cityIcon" mode="aspectFit" src="https://vfile.meituan.net/paotui/jfj3ojkyhk6gvi.png"></image>
+        </view>
+    </view>
+    <view class="fake-map {{certificationFlag===2&&certificationTestStrategy==='B'&&pageMode==='delivery'?'weak-certification-show':''}} {{pageMode==='delivery'&&hasAddressError?'address-error':''}}" wx:if="{{couponModalVisible||locationAuthModalVisible||modalMarketingVisible}}">
+        <image src="https://vfile.meituan.net/paotui/jfj3paam5hfr.png" style="width: 100%;height: 100%;"></image>
+    </view>
+    <map bindregionchange="onMapRegionChange" class="{{certificationFlag===2&&certificationTestStrategy==='B'&&pageMode==='delivery'?'weak-certification-show':''}} {{pageMode==='delivery'&&hasAddressError?'address-error':''}}" id="homeMap" latitude="{{mapPoint.lat}}" longitude="{{mapPoint.lng}}" markers="{{markers}}" scale="{{scale}}" showLocation="{{false}}" wx:if="{{!buyFullWindow&&!couponModalVisible&&!locationAuthModalVisible&&!modalMarketingVisible}}">
+        <processing-order hasStrongCertification="{{certificationFlag===2&&certificationTestStrategy==='C'&&pageMode==='delivery'}}" id="processing-order"></processing-order>
+        <cover-view bind:tap="handleTopMarketingTap" class="top-marketing" wx:if="{{topMarketing&&ongoingOrderIds.length===0&&waitForPaidOrderIds.length===0}}">
+            <cover-image class="top-marketing-background" src="https://vfile.meituan.net/paotui/jmhhoq4cxvr.png"></cover-image>
+            <cover-image class="top-marketing-icon" src="{{topMarketing.icon||'https://vfile.meituan.net/paotui/jlm1fysbzl.png'}}"></cover-image>
+            <cover-view class="top-marketing-content">{{topMarketing.content}}</cover-view>
+            <cover-image class="top-marketing-arrow" src="https://p0.meituan.net/paotui/k3ehml3lg9d.png"></cover-image>
+        </cover-view>
+        <cover-view class="calloutContainer" hidden="{{!pinText||!pinTextVisible&&pageMode!=='buy'}}">
+            <cover-view class="calloutBlock">
+                <cover-view class="centerCallout">{{pinText}}  </cover-view>
+            </cover-view>
+            <cover-image class="calloutArrow" src="https://vfile.meituan.net/paotui/jfj3s4frjdzpvi.png"></cover-image>
+        </cover-view>
+        <cover-image class="centerPoint" src="https://vfile.meituan.net/paotui/jfj3t6pvpb9.png" wx:if="{{pageMode==='buy'||sendAddress.id===undefined}}"></cover-image>
+        <cover-image bindtap="onTapMapRelocate" class="locateIcon {{certificationFlag===2&&certificationTestStrategy==='C'&&pageMode==='delivery'?'has-strong-certification':''}}" src="https://vfile.meituan.net/paotui/jfj3ts5ft4kj4i.png" wx:if="{{pageMode==='buy'||sendAddress.id===undefined}}"></cover-image>
+        <cover-view bindtap="onTapClearAddresses" class="deleteAddr {{certificationFlag===2&&certificationTestStrategy==='C'&&pageMode==='delivery'?'has-strong-certification':''}}" wx:if="{{sendAddress.id!==undefined&&pageMode==='delivery'}}">
+            <cover-image class="deleteAddrBtn" src="https://vfile.meituan.net/paotui/jfj3v72uyiizfr.png"></cover-image>
+        </cover-view>
+        <cover-image bind:tap="handleSuspendMarketingTap" class="suspend-marketing {{certificationFlag===2&&certificationTestStrategy==='C'&&pageMode==='delivery'?'has-strong-certification':''}}" src="{{suspendMarketing.icon}}" wx:if="{{suspendMarketing}}"></cover-image>
+        <cover-image catch:tap="goToCertificationInstruction" class="strong-certification-block" id="strongCertificationTip" src="https://p0.meituan.net/paotui/k2x2xdedpbk.png" wx:if="{{certificationFlag===2&&certificationTestStrategy==='C'&&pageMode==='delivery'}}"></cover-image>
+    </map>
+    <view class="full-window-buy-close" wx:if="{{buyFullWindow}}">
+        <image bindtap="onTapCloseFullWindowBuy" class="full-window-buy-close-btn" src="https://p0.meituan.net/paotui/k3eat0e3rh.png"></image>
+    </view>
+    <view class="main-form" style="{{buyFullWindow?'height: calc(100vh - 104rpx - 20rpx)':''}}">
+        <view class="form-tabs" id="form-tabs" wx:if="{{!buyFullWindow}}">
+            <view bindtap="togglePageMode" class="form-tab-btn left {{pageMode==='delivery'?'active':''}}" data-page-mode="delivery">取送件</view>
+            <view bindtap="togglePageMode" class="form-tab-btn right {{pageMode==='buy'?'active':''}}" data-page-mode="buy">代购<view class="buy-badge" wx:if="{{buyTabBadge}}">{{buyTabBadge}}</view>
+            </view>
+        </view>
+        <view class="list-wrap" id="delivery-form" wx:if="{{pageMode==='delivery'}}">
+            <view class="addrBlock infoContainer">
+                <address-item address="{{nearPoiAddress}}" addressStyle="{{noNearPoi?'color: #999999;':''}}" bind:tapAddressContent="handleSendAddressContentTap" bind:tapAddressNote="handleSendAddressNoteTap" contactStyle="{{nearPoiWarn?'color: #FB4E44;':''}}" hasAddressNote="{{!isAddressDegrade}}" hasBorderBottom="true" iconType="1" placeholder="从哪里发出" wx:if="{{!sendAddress.address&&nearPoiAddress}}"></address-item>
+                <address-item address="{{sendAddress}}" bind:tapAddressContent="handleSendAddressContentTap" bind:tapAddressNote="handleSendAddressNoteTap" errorTip="{{sendAddressErrorTip}}" hasAddressNote="{{!isAddressDegrade}}" hasBorderBottom="true" iconType="1" placeholder="从哪里发出" wx:if="{{sendAddress.address||!nearPoiAddress}}"></address-item>
+                <address-item address="{{receiveAddress}}" bind:tapAddressContent="handleReceiveAddressContentTap" bind:tapAddressNote="handleReceiveAddressNoteTap" errorTip="{{receiveAddressErrorTip}}" hasAddressNote="{{!isAddressDegrade}}" hasBorderBottom="true" iconType="2" placeholder="送到哪里去"></address-item>
+                <view class="recommendAddr" wx:if="{{showRecommendAddress&&recommendAddress.address&&sendAddress.id===undefined}}">
+                    <view bindtap="onTapRecommendAddress" class="leftAddr">
+                        <view class="recommend-sender">{{recommendAddress.address}} {{recommendAddress.houseNumber||''}}</view>
+                        <view class="recommend-sender" style="word-break: break-all;">
+                            <text class="name" wx:if="{{recommendAddress.name}}">{{recommendAddress.name||''}}</text>
+                            <text>{{recommendAddress.phone||''}}</text>
+                        </view>
+                    </view>
+                    <view bindtap="closeRecommendAddress" class="rightBtn">
+                        <image class="deleteBtn" src="https://vfile.meituan.net/paotui/jfj3w951e53ik9.png"></image>
+                    </view>
+                </view>
+            </view>
+            <goods-item bindtap="onTapGoodsInfo" class="goodInfoBox" goodsTypeName="{{goodsInfo.goodsTypeName}}" goodsValue="{{[goodsInfo.minGoodsValue,goodsInfo.maxGoodsValue]}}" highlight="{{sendAddress.id!==undefined&&receiveAddress.id!==undefined&&!goodsInfoText}}" id="goodsItem" weight="{{goodsInfo.goodsWeight}}"></goods-item>
+            <button bindgetuserinfo="handleGetUserInfo" class="auth-layer" openType="getUserInfo" style="height: 392rpx" wx:if="{{!isLogin}}"></button>
+        </view>
+        <view class="buy-form" wx:if="{{pageMode==='buy'}}">
+            <view class="buy-input-row">
+                <scroll-view bindtap="onTapEditingTextBelow" class="buy-textview {{buyDescription===''?'buy-input-tip':''}}" scrollY="true" wx:if="{{!buyFullWindow}}">{{buyDescription?buyDescription:buyEditTip}}</scroll-view>
+                <textarea adjustPosition="false" bindblur="onBuyInputBlur" bindinput="onInputBuyDescription" bindtap="onTapBuyInput" class="buy-textarea" focus="{{buyInputFocus}}" maxlength="105" placeholder="{{buyInputTip}}" placeholderClass="buy-input-tip" showConfirmBar="{{false}}" value="{{buyEditingDescription}}" wx:if="{{buyFullWindow}}"></textarea>
+                <view class="buy-btn-shadow">&nbsp;</view>
+                <view bindtap="onTapBuyBtn" class="buy-btn">下单</view>
+            </view>
+            <view class="buy-categories" wx:if="{{!buyFullWindow}}">
+                <view bindtap="onTapCategoryIconBelow" class="buy-category" data-category="{{item}}" data-position="{{index+1}}" wx:if="{{index<5}}" wx:for="{{buyCategories}}" wx:key="id">
+                    <image class="buy-category-image" src="{{item.icon}}"></image>
+                    <view class="buy-category-text">{{item.name}}</view>
+                </view>
+            </view>
+            <view class="buy-categories-detail" wx:if="{{buyFullWindow}}">
+                <view class="buy-cat-detail-navs">
+                    <view bindtap="onTapCategoryTitle" class="buy-cat-detail-nav {{item.id===buyCategorySelected.id?'active':''}}" data-category="{{item}}" data-position="{{index+1}}" wx:if="{{index<5}}" wx:for="{{buyCategories}}" wx:key="{{index}}">{{item.name}}</view>
+                </view>
+                <view class="buy-cat-detail-items">
+                    <view bindtap="onTapCategoryItem" class="buy-cat-detail-item" data-text="{{item}}" wx:for="{{buyCategorySelected.tags}}" wx:key="{{index}}">{{item}}</view>
+                </view>
+            </view>
+            <button bindgetuserinfo="handleGetUserInfo" class="auth-layer" openType="getUserInfo" style="height: 392rpx" wx:if="{{!isLogin}}"></button>
+        </view>
+    </view>
+    <image catch:tap="goToCertificationInstruction" class="weak-certification-block" id="weakCertificationTip" src="https://p0.meituan.net/paotui/k2x2s6vqpo8.png" wx:if="{{certificationFlag===2&&certificationTestStrategy==='B'&&pageMode==='delivery'}}"></image>
+    <view capture-bind:tap="hideFallingCoupons" capture-catch:touchmove="preventD" class="layer" style="{{couponLayerStyle}}"></view>
+    <view capture-catch:touchmove="preventD" class="coupon" style="{{couponModalStyle}}">
+        <view class="modalHeadContainer">
+            <image class="modalHead" src="{{couponBanner}}"></image>
+        </view>
+        <view class="modalBody" style="background-color: #{{couponStyle.popupBg}}">
+            <view class="couponList">
+                <view class="couponBlock" wx:for="{{couponList}}" wx:key="key">
+                    <view class="coupon-dot left" style="background-color: #{{couponStyle.popupBg}}"></view>
+                    <view class="coupon-dot right" style="background-color: #{{couponStyle.popupBg}}"></view>
+                    <view class="couponLine couponUp">
+                        <view class="couponTitle">{{item.couponName}}</view>
+                        <view class="couponMoney">
+                            <view class="moneyUnit" wx:if="{{item.couponType===1}}">￥</view>
+                            <view class="moneyValue">{{item.intNum}}</view>
+                            <view class="moneyDecimal" wx:if="{{item.floatNum}}">.{{item.floatNum}}</view>
+                            <view class="moneyDecimal" style="margin-left: 8rpx;font-size: 32rpx;" wx:if="{{item.couponType===2}}">折</view>
+                        </view>
+                    </view>
+                    <view class="couponLine couponBtm">
+                        <view class="couponValid">{{item.deadline}}</view>
+                        <view class="couponUsage">{{item.orderAmountLimit}}</view>
+                    </view>
+                </view>
+            </view>
+            <view bindtap="hideFallingCoupons" class="enterBtn" style="background-color: #{{couponStyle.homeButtonBg}};color: #{{couponStyle.homeButtonTextBg}}">
+                <view>{{couponStyle.homeButtonText}}</view>
+            </view>
+        </view>
+        <view bindtap="hideFallingCoupons" class="modalFooter">
+            <image class="closeBtn" src="https://p0.meituan.net/paotui/j818u49yq8h0k9.png"></image>
+        </view>
+    </view>
+    <auth-modal bind:click-cancel="onLocationAuthModalCancel" bind:click-confirm="onLocationAuthModalConfirm" bind:set-end="onSettingEnd" content="检测到您没有打开美团跑腿的地理位置权限，是否去设置打开？" show="{{locationAuthModalVisible}}" textCancel="取消" textOk="确定"></auth-modal>
+    <!-- <modal bind:click-background="handleCloseModalMarketing" externalStyle="background: rgba(0, 0, 0, 0.75)" modalStyle="width: 560rpx;background: rgba(0, 0, 0, 0)" show="{{modalMarketingVisible}}" slotOption="{{modalMarketingOption}}">
+        <view class="modal-marketing-body" slot="body">
+            <image bind:tap="handleModalMarketingTap" class="modal-marketing-image" src="{{modalMarketing.picUrl}}"></image>
+            <image catch:tap="handleCloseModalMarketing" class="modal-marketing-close" src="https://p0.meituan.net/paotui/k3ehb287hr.png"></image>
+        </view>
+    </modal> -->
+</view>
