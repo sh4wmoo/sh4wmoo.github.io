@@ -1,0 +1,2 @@
+<!--miniprogram/pages/test/test.wxml-->
+<button bindtap="test_add">新建</button>
