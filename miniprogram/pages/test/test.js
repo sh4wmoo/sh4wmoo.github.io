@@ -102,9 +102,17 @@ Page({
 
       // 根据id进行指令更新
       //_需进行实例化：const _ = wx.cloud.database().command
-      param = { count: _.inc(1001) }
-      var id = 'e6a3b07d5eeb732000103caa2cd177a8'
-      return db.update_by_id(table_name, id, param)
+      // param = { count: _.inc(1001) }
+      // var id = 'e6a3b07d5eeb732000103caa2cd177a8'
+      // return db.update_by_id(table_name, id, param)
+
+      // 根据id查询
+      // var id = 'e6a3b07d5eeb732000103caa2cd177a8'
+      // return db.select_by_id(table_name, id)
+
+      // 根据条件查询
+      param = {count:10}
+      return db.select_by_cond(table_name, param)
 
     })
     .then(res => {

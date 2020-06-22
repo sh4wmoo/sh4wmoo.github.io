@@ -55,7 +55,7 @@ function insert(table_name, param) {
  */
 function delete_by_id(table_name, id) {
   return new Promise((resolve, reject) => {
-    console.log('*******************\n[操作]：delete_by_id\n[表名]：' + table_name + '\n[参数]：' + JSON.stringify(id))
+    console.log('*******************\n[操作]：delete_by_id\n[表名]：' + table_name + '\n[id]：' + JSON.stringify(id))
     db.collection(table_name).doc(id).remove()
       .then(res => {
         console.log('[delete_by_id] [' + table_name + '] 表，%c成功！%c返回信息：', 'color: green', 'color: white', res)
@@ -96,7 +96,7 @@ function delete_by_cond(table_name, param) {
  * create_date  2020-06-22
  * remark       *如果指定id的记录不存在，则会自动创建该记录，该记录将拥有指定的id*
  */
-function update_by_id(table_name,id,param) {
+function update_by_id(table_name,id,param) { 
   return new Promise((resolve, reject) => {
     console.log('*******************\n[操作]update_by_id\n[表名]：' + table_name + '\n[id]：' + id+ '\n[参数]：' + JSON.stringify(param))
     db.collection(table_name).doc(id).update({data:param})
@@ -107,6 +107,50 @@ function update_by_id(table_name,id,param) {
       .catch(err => {
         console.log('[update_by_id] [' + table_name + '] 表，%c失败！%c\n异常信息：', 'color: red', 'color: white', err)
         reject('[update_by_id] [' + table_name + '] 表，失败！\n异常信息：' + err);
+      })
+  })
+}
+
+/**
+ * description  云端数据库select_by_id方法
+ * param        [table_name：表名] [id:唯一id] [param：参数]
+ * author       sh4wmoo
+ * create_date  2020-06-22
+ * remark       *如果指定id的记录不存在，则会自动创建该记录，该记录将拥有指定的id*
+ */
+function select_by_id(table_name,id) { 
+  return new Promise((resolve, reject) => {
+    console.log('*******************\n[操作]select_by_id\n[表名]：' + table_name + '\n[id]：' + id)
+    db.collection(table_name).doc(id).get()
+      .then(res => {
+        console.log('[select_by_id] [' + table_name + '] 表，%c成功！%c返回信息：', 'color: green', 'color: white' , res)
+        resolve(res);
+      })
+      .catch(err => {
+        console.log('[select_by_id] [' + table_name + '] 表，%c失败！%c\n异常信息：', 'color: red', 'color: white', err)
+        reject('[select_by_id] [' + table_name + '] 表，失败！\n异常信息：' + err);
+      })
+  })
+}
+
+/**
+ * description  云端数据库select_by_id方法
+ * param        [table_name：表名] [id:唯一id] [param：参数]
+ * author       sh4wmoo
+ * create_date  2020-06-22
+ * remark       *如果指定id的记录不存在，则会自动创建该记录，该记录将拥有指定的id*
+ */
+function select_by_cond(table_name,param) { 
+  return new Promise((resolve, reject) => {
+    console.log('*******************\n[操作]select_by_cond\n[表名]：' + table_name + '\n[param]：'+ JSON.stringify(param))
+    db.collection(table_name).where(param).get()
+      .then(res => {
+        console.log('[select_by_cond] [' + table_name + '] 表，%c成功！%c返回信息：', 'color: green', 'color: white' , res)
+        resolve(res);
+      })
+      .catch(err => {
+        console.log('[select_by_cond] [' + table_name + '] 表，%c失败！%c\n异常信息：', 'color: red', 'color: white', err)
+        reject('[select_by_cond] [' + table_name + '] 表，失败！\n异常信息：' + err);
       })
   })
 }
@@ -127,5 +171,7 @@ module.exports = {
   insert: insert,
   delete_by_id: delete_by_id,
   delete_by_cond: delete_by_cond,
-  update_by_id: update_by_id
+  update_by_id: update_by_id,
+  select_by_id:select_by_id,
+  select_by_cond:select_by_cond
 };
