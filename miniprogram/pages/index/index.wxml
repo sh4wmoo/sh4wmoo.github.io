@@ -55,17 +55,17 @@
     </navigator>
   </view>
 
-  <!-- 首页 -->
-  <view class="uploader">
-    <navigator url="../copy/home/home" open-type="navigate" class="uploader-text">
-      <text>首页</text>
-    </navigator>
-  </view>
-
   <!-- 测试db工具类 -->
   <view class="uploader">
     <navigator url="../test/test" open-type="navigate" class="uploader-text">
       <text>测试db工具类</text>
+    </navigator>
+  </view>
+
+    <!-- 首页 -->
+    <view class="uploader">
+    <navigator url="../home/home" open-type="navigate" class="uploader-text">
+      <text>首页</text>
     </navigator>
   </view>
 

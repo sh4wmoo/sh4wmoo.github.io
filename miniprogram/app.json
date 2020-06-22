@@ -13,14 +13,35 @@
     "pages/openapi/cloudid/cloudid",
     "pages/im/im",
     "pages/im/room/room",
-    "pages/test/test"
+    "pages/test/test",
+    "pages/home/home",
+    "pages/mine/mine"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
-    "navigationBarTextStyle": "black"
+    "navigationBarBackgroundColor": "#FB5D74",
+    "navigationBarTitleText": "沐心 · 美容",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "borderStyle": "white",
+    "selectedColor": "#FB5D74",
+    "color": "#8a8a8a",
+    "list": [{
+      "pagePath": "pages/index/index",
+      "text": "工具类"
+    }, {
+      "pagePath": "pages/home/home",
+      "text": "首页",
+      "iconPath": "images/home.png",
+      "selectedIconPath": "images/home_s.png"
+    }, {
+      "pagePath": "pages/mine/mine",
+      "text": "我的",
+      "iconPath": "images/mine.png",
+      "selectedIconPath": "images/mine_s.png"
+    }]
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2"
