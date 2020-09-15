@@ -1,2 +1,9 @@
 <!--pages/home/home.wxml-->
-<text>pages/home/home.wxml</text>
+<swiper style="" autoplay="{{autoplay}}" circular="{{circular}}" interval="{{interval}}" duration="{{duration}}" class="swiper">
+  <block wx:for="{{swiper_item}}" wx:key="*this">
+    <swiper-item>
+      <image src="{{item}}" mode="aspectFit" class="swiper-item-img"></image>
+    </swiper-item>
+  </block>
+</swiper>
+
